@@ -1,3 +1,6 @@
+# About this fork
+This is a fork of the [mindmaps] (http://drichard.org/mindmaps) project by D. Richard. It is meant to add an "article" feature that allows editing of long texts for each nodes. 
+
 # mindmaps
 mindmaps is a prototype of an HTML5 based mind mapping application. It lets you create neat looking mind maps in the browser. 
 
