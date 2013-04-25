@@ -140,7 +140,12 @@ mindmaps.DefaultCanvasView = function() {
       self.nodeCaptionEditCommitted(node, text);
     }
   };
-
+  var articleEditor = new ArticleEditor(this);
+  articleEditor.commit = function(node, text) {
+    if (self.nodeArticleEditCommitted) {
+      self.nodeArticleEditCommitted(node, text);
+    }
+  };
   var textMetrics = mindmaps.TextMetrics;
   var branchDrawer = new mindmaps.CanvasBranchDrawer();
   branchDrawer.beforeDraw = function(width, height, left, top) {
@@ -197,9 +202,9 @@ mindmaps.DefaultCanvasView = function() {
 
     // setup delegates
     $drawingArea.delegate("div.node-caption", "mousedown", function(e) {
-      var node = $(this).parent().data("node");
+      var node = $(this).parent().data("node");  
       if (self.nodeMouseDown) {
-        self.nodeMouseDown(node);
+        self.nodeMouseDown(node,e.which);
       }
     });
 
@@ -556,6 +561,22 @@ mindmaps.DefaultCanvasView = function() {
   this.stopEditNodeCaption = function() {
     captionEditor.stop();
   };
+  
+  /**
+   * Goes into edit mode for a node.
+   * 
+   * @param {mindmaps.Node} node
+   */
+  this.editNodeArticle = function(node) {
+	articleEditor.edit(node, this.$getDrawingArea());
+  };
+
+  /**
+   * Stops the current edit mode.
+   */
+  this.stopEditNodeArticle = function() {
+	  articleEditor.stop();
+  };
 
   /**
    * Updates the text caption for a node.
@@ -851,6 +872,105 @@ mindmaps.DefaultCanvasView = function() {
       }
     };
   }
+  
+  
+  /**
+   * Creates a new ArticleEditor. 
+   * 
+   * @constructor
+   * @param {mindmaps.CanvasView} view
+   */
+  function ArticleEditor(view) {
+    var self = this;
+    var attached = false;
+
+    function commitText() {
+      if (attached && self.commit) {
+        self.commit(self.node, self.editor.getValue());
+      }
+    }
+
+    /**
+     * 
+     * @param {mindmaps.Node} node
+     * @param {jQuery} $cancelArea
+     */
+    this.edit = function(node, $cancelArea) {
+      if (attached) {
+        return;
+      }
+      this.node = node;
+      attached = true;
+      this.$cancelArea = $cancelArea;
+      this.text = this.node.getArticle();
+      
+      // create dialog
+	  this.$dialog = $("#template-article-editor").tmpl().dialog({
+		autoOpen : false,
+		modal : true,
+		zIndex : 5000,
+		width : "auto",
+		height : "auto",
+		position:'center',
+		close: self.stop,
+		//close : function() {
+		//  $(this).dialog("destroy");
+		//  $(this).remove();
+		//},
+		open : function() {
+		  $(this).css({
+			"max-width" : $(window).width() * 0.9,
+			"max-height" : $(window).height() * 0.8
+		  });
+		  //$dialog.dialog("option", "position", "center");
+		},
+		buttons : {
+		  "Ok" : self.stop //function() {
+			//$(this).dialog("close");
+		  //}
+		}
+	  });
+	  //.bind("keydown", "esc", function() {
+      //  self.stop();
+      //})
+    
+      $('#wysihtml5-editor').html(this.node.getArticle());
+	  this.editor = new wysihtml5.Editor("wysihtml5-editor", {
+		toolbar:        "wysihtml5-editor-toolbar",
+		stylesheets:    "css/wysihtml5/editor.css",
+		parserRules:    wysihtml5ParserRules
+	  });
+	  this.editor.on("blur", function() {
+        commitText();
+      });
+	
+	  // Open
+      this.$dialog.dialog("open");
+      
+      // jquery ui prevents blur() event from happening when dragging a
+      // draggable. need this
+      // workaround to detect click on other draggable
+      //$cancelArea.bind("mousedown.editNodeCaption", function(e) {
+      //  commitText();
+      //});
+    };
+
+    /**
+     * 
+     */
+    this.stop = function() {
+      if (attached) {
+        attached = false;
+		commitText();
+		this.$dialog.dialog("close");
+
+		delete this.editor;
+		delete this.dialog;
+      }
+    };
+  }
+  
+  
 
   /**
    * Creates a new Creator. This tool is used to drag out new branches to

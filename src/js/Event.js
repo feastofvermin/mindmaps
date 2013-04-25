@@ -48,6 +48,12 @@ mindmaps.Event = {
   NODE_TEXT_CAPTION_CHANGED : "NodeTextCaptionChangedEvent",
 
   /**
+   * @event
+   * @param {mindmaps.Node} node
+   */
+  NODE_TEXT_ARTICLE_CHANGED : "NodeTextArticleChangedEvent",
+
+  /**
    * Some parameter of the node font attribute has changed.
    * 
    * @event

@@ -234,6 +234,30 @@ mindmaps.action.ChangeNodeCaptionAction = function(node, caption) {
 mindmaps.action.ChangeNodeCaptionAction.prototype = new mindmaps.action.Action();
 
 /**
+ * Creates a new ChangeNodeArticleAction.
+ * 
+ * @constructor
+ * @augments mindmaps.action.Action
+ * @param {mindmaps.Node} node
+ * @param {String} caption
+ */
+mindmaps.action.ChangeNodeArticleAction = function(node, article) {
+  var oldArticle = node.getArticle();
+  
+  this.execute = function() {
+
+    node.setArticle(article);
+  };
+
+  this.event = [ mindmaps.Event.NODE_TEXT_ARTICLE_CHANGED, node ];
+  this.undo = function() {
+    return new mindmaps.action.ChangeNodeArticleAction(node, oldArticle);
+  };
+};
+mindmaps.action.ChangeNodeCaptionAction.prototype = new mindmaps.action.Action();
+
+
+/**
  * Creates a new ChageNodeFontSizeAction.
  * 
  * @constructor

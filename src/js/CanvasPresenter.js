@@ -116,8 +116,18 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
    * 
    * @ignore
    */
-  view.nodeMouseDown = function(node) {
-    mindmapModel.selectNode(node);
+  view.nodeMouseDown = function(node,which) {
+	which = which || 1;
+	switch(which){
+		case 1:
+		case 2:
+		default:
+			mindmapModel.selectNode(node);
+			break;
+		case 3:
+			mindmapModel.selectNode(node);
+			view.editNodeArticle(node);
+	}
     // show creator
     creator.attachToNode(node);
   };
@@ -211,6 +221,25 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 
     view.stopEditNodeCaption();
     mindmapModel.changeNodeCaption(node, str);
+  };
+  
+  /**
+   * View callback: Change node article when text change was committed in
+   * view.
+   * 
+   * @ignore
+   * @param {mindmaps.Node} node
+   * @param {String} str
+   */
+  view.nodeArticleEditCommitted = function(node, str) {
+    // avoid whitespace only strings
+    var str = $.trim(str);
+    if (!str) {
+      return;
+    }
+
+    //view.stopEditNodeArticle();
+    mindmapModel.changeNodeArticle(node, str);
   };
 
   this.go = function() {

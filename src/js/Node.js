@@ -16,7 +16,8 @@ mindmaps.Node = function() {
       /** unit: pixel */
       size : 15,
       color : "#000000"
-    }
+    },
+	article: "Long description of this idea."
   };
   this.offset = new mindmaps.Point();
   this.foldChildren = false;
@@ -285,6 +286,24 @@ mindmaps.Node.prototype.setCaption = function(caption) {
  */
 mindmaps.Node.prototype.getCaption = function() {
   return this.text.caption;
+};
+
+/**
+ * Sets the article for the node
+ * 
+ * @param {String} caption
+ */
+mindmaps.Node.prototype.setArticle = function(article) {
+  this.text.article = article;
+};
+
+/**
+ * Gets the article for the node.
+ * 
+ * @returns {String}
+ */
+mindmaps.Node.prototype.getArticle = function() {
+  return this.text.article;
 };
 
 /**

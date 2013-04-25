@@ -167,6 +167,22 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry, undoController) {
     var action = new mindmaps.action.ChangeNodeCaptionAction(node, caption);
     this.executeAction(action);
   };
+  
+   /**
+   * Changes the article for the passed node or for the selected one if node
+   * is null.
+   * 
+   * @param {mindmaps.Node} node
+   * @param {String} caption
+   */
+  this.changeNodeArticle = function(node, article) {
+    if (!node) {
+      node = this.selectedNode;
+    }
+
+    var action = new mindmaps.action.ChangeNodeArticleAction(node, article);
+    this.executeAction(action);
+  };
 
   /**
    * Executes a node action. An executed action might raise an event over the
