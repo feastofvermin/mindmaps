@@ -883,6 +883,7 @@ mindmaps.DefaultCanvasView = function() {
   function ArticleEditor(view) {
     var self = this;
     var attached = false;
+	//var $dialog = null;
 
     function commitText() {
       if (attached && self.commit) {
@@ -909,30 +910,21 @@ mindmaps.DefaultCanvasView = function() {
 		autoOpen : false,
 		modal : true,
 		zIndex : 5000,
-		width : "auto",
+		width : "815px",
 		height : "auto",
 		position:'center',
 		close: self.stop,
-		//close : function() {
-		//  $(this).dialog("destroy");
-		//  $(this).remove();
-		//},
 		open : function() {
 		  $(this).css({
 			"max-width" : $(window).width() * 0.9,
 			"max-height" : $(window).height() * 0.8
 		  });
-		  //$dialog.dialog("option", "position", "center");
 		},
 		buttons : {
-		  "Ok" : self.stop //function() {
-			//$(this).dialog("close");
-		  //}
+		  "Ok" : self.stop 
 		}
 	  });
-	  //.bind("keydown", "esc", function() {
-      //  self.stop();
-      //})
+	  //.bind("keydown", "esc", self.stop());
     
       $('#wysihtml5-editor').html(this.node.getArticle());
 	  this.editor = new wysihtml5.Editor("wysihtml5-editor", {
@@ -946,7 +938,7 @@ mindmaps.DefaultCanvasView = function() {
 	
 	  // Open
       this.$dialog.dialog("open");
-      
+
       // jquery ui prevents blur() event from happening when dragging a
       // draggable. need this
       // workaround to detect click on other draggable
@@ -962,10 +954,12 @@ mindmaps.DefaultCanvasView = function() {
       if (attached) {
         attached = false;
 		commitText();
-		this.$dialog.dialog("close");
+		self.$dialog.dialog("close");
+		self.$dialog.dialog("destroy");
+		self.$dialog.remove();
 
 		delete this.editor;
-		delete this.dialog;
+		delete this.$dialog;
       }
     };
   }
