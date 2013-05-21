@@ -923,8 +923,8 @@ mindmaps.DefaultCanvasView = function() {
 		buttons : {
 		  "Ok" : self.stop 
 		}
-	  });
-	  //.bind("keydown", "esc", self.stop());
+	  })
+	  .bind("keydown", "esc", self.stop);
     
       $('#wysihtml5-editor').html(this.node.getArticle());
 	  this.editor = new wysihtml5.Editor("wysihtml5-editor", {
@@ -938,13 +938,8 @@ mindmaps.DefaultCanvasView = function() {
 	
 	  // Open
       this.$dialog.dialog("open");
-
-      // jquery ui prevents blur() event from happening when dragging a
-      // draggable. need this
-      // workaround to detect click on other draggable
-      //$cancelArea.bind("mousedown.editNodeCaption", function(e) {
-      //  commitText();
-      //});
+      
+      this.timer = setInterval(commitText, 20000);
     };
 
     /**
@@ -960,6 +955,7 @@ mindmaps.DefaultCanvasView = function() {
 
 		delete this.editor;
 		delete this.$dialog;
+		delete this.timer;
       }
     };
   }
